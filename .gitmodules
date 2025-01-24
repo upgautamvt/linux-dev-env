@@ -1,4 +1,5 @@
 [submodule "linux"]
 	path = linux
 	url = git@github.com:upgautamvt/linux.git
+	branch = v6.12
 
