@@ -26,14 +26,7 @@ git submodule update
 #### Copy config file to linux folder
 
 ``` cp linux-config/.config ./linux ```
-
-or 
-
-```
-cd linux
-make defconfig
-cd ../
-```
+Feel free to make changes to the config based on the usecase
 
 #### Build linux
 
@@ -57,9 +50,7 @@ make enter-docker
 ```
 
 #### If you want to debug the kernel using gdb
-```
-make qemu-run-gdb
-```
+
 In an another terminal
 ```
 cd linux

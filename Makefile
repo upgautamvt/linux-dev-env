@@ -5,7 +5,7 @@ NET_PORT ?= "52223"
 GDB_PORT ?= "1234"
 .ALWAYS:
 
-all: vmlinux fs samples
+all: vmlinux 
 
 docker: .ALWAYS
 	docker buildx build --network=host --progress=plain -t runtime-dev .
