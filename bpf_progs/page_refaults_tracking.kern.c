@@ -2,27 +2,27 @@
 #include <bpf/bpf_helpers.h>
 
 #define MAX_ENTRIES 1024
-#define REFRESH_WINDOW_NS 1000000000 // 1 second (in nanoseconds)
+#define REFRESH_WINDOW_NS 5000000000 // 5 seconds (in nanoseconds)
 
 struct page_info {
-    u64 refaults;  // number of refaults for a page
-    u64 evictions; // number of evictions for a page
-    u64 eviction_timestamp; // timestamp of last eviction
+    __u64 refaults;  // number of refaults for a page
+    __u64 evictions; // number of evictions for a page
+    __u64 eviction_timestamp; // timestamp of last eviction
 };
 
-struct bpf_map_def SEC("maps") page_stats = {
-    .type = BPF_MAP_TYPE_HASH,
-    .key_size = sizeof(u64),
-    .value_size = sizeof(struct page_info),
-    .max_entries = MAX_ENTRIES,
-};
+struct {
+      __uint(type, BPF_MAP_TYPE_HASH);
+      __uint(max_entries, MAX_ENTRIES);
+      __type(key, __u32);
+      __type(value, struct page_info);
+} page_stats SEC(".maps");
 
 SEC("tracepoint/mm/page_fault")
 int on_page_fault(struct trace_event_raw_mm_page_fault *ctx)
 {
-    u64 page_id = ctx->address;  // Using the address as the unique page identifier
+    __u64 page_id = ctx->address;  // Using the address as the unique page identifier
     struct page_info *info;
-    u64 current_time = bpf_ktime_get_ns();  // Current time in nanoseconds
+    __u64 current_time = bpf_ktime_get_ns();  // Current time in nanoseconds
 
     // Lookup the page entry from the map
     info = bpf_map_lookup_elem(&page_stats, &page_id);
@@ -45,9 +45,9 @@ int on_page_fault(struct trace_event_raw_mm_page_fault *ctx)
 SEC("tracepoint/mm/page_evict")
 int on_page_evict(struct trace_event_raw_mm_page_evict *ctx)
 {
-    u64 page_id = ctx->address;
+    __u64 page_id = ctx->address;
     struct page_info *info;
-    u64 current_time = bpf_ktime_get_ns();  // Current time in nanoseconds
+    __u64 current_time = bpf_ktime_get_ns();  // Current time in nanoseconds
 
     // Lookup the page entry from the map
     info = bpf_map_lookup_elem(&page_stats, &page_id);
@@ -63,9 +63,9 @@ int on_page_evict(struct trace_event_raw_mm_page_evict *ctx)
 SEC("prog")
 int count_page_refault_ratio(void *ctx)
 {
-    u64 total_refaults = 0, total_evictions = 0;
+    __u64 total_refaults = 0, total_evictions = 0;
     struct page_info *info;
-    u64 key = 0;
+    __u64 key = 0;
 
     // Iterate over the map and sum the refaults and evictions
     while (bpf_map_get_next_key(&page_stats, &key)) {
@@ -78,7 +78,7 @@ int count_page_refault_ratio(void *ctx)
 
     // Calculate page refault ratio (avoid division by zero)
     if (total_evictions > 0) {
-        u64 refault_ratio = total_refaults * 100 / total_evictions;
+        __u64 refault_ratio = total_refaults * 100 / total_evictions;
         bpf_printk("Page refault ratio: %llu%%\n", refault_ratio);
     }
 

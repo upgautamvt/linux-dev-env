@@ -1,6 +1,6 @@
 BASE_PROJ ?= $(shell pwd)
 LINUX ?= ${BASE_PROJ}/linux
-DOCKER_IMAGE ?= "${DOCKER_IMAGE}"
+DOCKER_IMAGE ?= "runtime-dev"
 SSH_PORT ?= "52222"
 NET_PORT ?= "52223"
 GDB_PORT ?= "1234"
@@ -9,7 +9,7 @@ GDB_PORT ?= "1234"
 all: vmlinux 
 
 docker: .ALWAYS
-	docker buildx build --network=host --progress=plain -t ${DOCKER_IMAGE} .
+	docker buildx build --no-cache --network=host --progress=plain -t ${DOCKER_IMAGE} .
 
 qemu-run: 
 	docker run --privileged --rm \
