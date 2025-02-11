@@ -9,7 +9,7 @@ GDB_PORT ?= "1234"
 all: vmlinux 
 
 docker: .ALWAYS
-	docker buildx build --no-cache --network=host --progress=plain -t ${DOCKER_IMAGE} .
+	docker buildx build --network=host --progress=plain -t ${DOCKER_IMAGE} .
 
 qemu-run: 
 	docker run --privileged --rm \
@@ -17,7 +17,8 @@ qemu-run:
 	-v ${BASE_PROJ}:/linux-dev-env -v ${LINUX}:/linux \
 	-w /linux \
 	-p 127.0.0.1:${SSH_PORT}:52222 \
-	-p 127.0.0.1:${NET_PORT}:52223/udp \
+	-p 127.0.0.1:${NET_PORT}:52223 \
+	-p 127.0.0.1:52224:52224/udp \
 	-p 127.0.0.1:${GDB_PORT}:1234 \
 	-it ${DOCKER_IMAGE}:latest \
 	/linux-dev-env/q-script/yifei-q -s
@@ -56,3 +57,9 @@ bpftool:
 
 bpftool-clean:
 	docker run --rm -v ${LINUX}:/linux -w /linux/tools/bpf/bpftool ${DOCKER_IMAGE} make clean -j`nproc`
+
+perf:
+	docker run --rm -v ${LINUX}:/linux -w /linux/tools/perf ${DOCKER_IMAGE} make -j`nproc`
+
+perf-clean:
+	docker run --rm -v ${LINUX}:/linux -w /linux/tools/per ${DOCKER_IMAGE} make clean -j`nproc`

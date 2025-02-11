@@ -80,6 +80,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --fix-missing -y \
     libbpf-dev \
     linux-tools-common
 
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --fix-missing -y python3-dev flex bison systemtap-sdt-dev libunwind-dev libelf-dev libssl-dev libtraceevent-dev libtracefs-dev systemtap-sdt-dev libslang2-dev libperl-dev libbabeltrace2-dev libpfm4-dev
 
 RUN wget https://apt.llvm.org/llvm.sh
 RUN chmod +x llvm.sh
