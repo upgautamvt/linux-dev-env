@@ -1,0 +1,63 @@
+Requirements
+    kernel with CONFIG_DEBUG_INFO_BTF=y
+        (I compiled the kernel source. My .config has CONFIG_DEBUG_INFO_BTF=y)
+    CONFIG_DEBUG_INFO_BTF_MODULES=y
+    CONFIG_DEBUG_INFO_SPLIT=n
+        # CONFIG_DEBUG_INFO_SPLIT is not set. It means DWARF and BTF stay in main file (i.e., vmlinux)
+    Must compile with GCC or Clang that supports BTF generation
+        (gcc version 11+, clang version 9+)
+    Vmlinux (kernel image) must have BTF metadata in it
+        root@q:/linux-dev-env/bpf-progs/kfunc/kfunc_module# readelf -S ../../../linux/vmlinux | grep '\.BTF'
+          [16] .BTF              PROGBITS         ffffffff82c62ce8  01c63ce8
+          [17] .BTF_ids          PROGBITS         ffffffff832ab178  0229bf07
+        or use pahole -J ../../../linux/vmlinux should output nothing (no error)
+
+Compilation and module loading
+    root@q:/linux-dev-env/bpf-progs/kfunc/kfunc_module# uname -r
+    6.12.0
+
+    root@q:/linux-dev-env/bpf-progs/kfunc/kfunc_module# make
+    Building hello.ko with BTF support
+    make -C /lib/modules/6.12.0/build \
+            M=/linux-dev-env/bpf-progs/kfunc/kfunc_module modules
+    make[1]: Entering directory '/linux'
+      CC [M]  /linux-dev-env/bpf-progs/kfunc/kfunc_module/hello.o
+      MODPOST /linux-dev-env/bpf-progs/kfunc/kfunc_module/Module.symvers
+      CC [M]  /linux-dev-env/bpf-progs/kfunc/kfunc_module/hello.mod.o
+      CC [M]  /linux-dev-env/bpf-progs/kfunc/kfunc_module/.module-common.o
+      LD [M]  /linux-dev-env/bpf-progs/kfunc/kfunc_module/hello.ko
+      BTF [M] /linux-dev-env/bpf-progs/kfunc/kfunc_module/hello.ko
+    make[1]: Leaving directory '/linux'
+    root@q:/linux-dev-env/bpf-progs/kfunc/kfunc_module# ls
+    Makefile  Module.symvers  hello.c  hello.ko  hello.mod  hello.mod.c  hello.mod.o  hello.o  instructions  modules.order
+    root@q:/linux-dev-env/bpf-progs/kfunc/kfunc_module# insmod hello.ko
+    [  118.928881][  T496] hello: loading out-of-tree module taints kernel.
+    [  118.929520][  T496] Hello, world!
+    [  118.929747][  T496] bpf_kfunc_example: Module loaded successfully
+
+
+Test
+    The modules BTF metadata doesn't go in the vmlinux. Instead it lives in module's own ELF and BTF
+
+    root@q:/linux-dev-env/bpf-progs/kfunc/kfunc_module# readelf -S hello.ko | grep '\.BTF'
+    [ 7] .BTF_ids          PROGBITS         0000000000000000  00000125
+    [58] .BTF              PROGBITS         0000000000000000  00033a38
+
+    root@q:/linux-dev-env/bpf-progs/kfunc/kfunc_module# bpftool btf dump file hello.ko \
+        -B /sys/kernel/btf/vmlinux \
+        format raw | grep bpf_strstr -A3
+    [147544] FUNC 'bpf_strstr' type_id=147543 linkage=static
+    [147545] FUNC 'hello_exit' type_id=129 linkage=static
+    [147546] FUNC 'hello_init' type_id=127 linkage=static
+
+    root@q:/linux-dev-env/bpf-progs/kfunc/kfunc_module# bpftool btf dump file hello.ko \
+        -B /sys/kernel/btf/vmlinux \
+        format raw \
+      | sed -n '/\[147543\]/,/^\[/p'
+    [147543] FUNC_PROTO '(anon)' ret_type_id=22 vlen=4
+            'str' type_id=6
+            'str__sz' type_id=36
+            'substr' type_id=6
+            'substr__sz' type_id=36
+    [147544] FUNC 'bpf_strstr' type_id=147543 linkage=static
+

@@ -1,4 +1,5 @@
 BASE_PROJ ?= $(shell pwd)
+PARENT_DIR ?= $(dir $(BASE_PROJ))
 LINUX ?= ${BASE_PROJ}/linux
 DOCKER_IMAGE ?= "runtime-dev"
 SSH_PORT ?= "52222"
@@ -14,6 +15,7 @@ docker: .ALWAYS
 qemu-run: 
 	docker run --privileged --rm \
 	--device=/dev/kvm:/dev/kvm \
+	-v ${PARENT_DIR}:/parent-dir \
 	-v ${BASE_PROJ}:/linux-dev-env -v ${LINUX}:/linux \
 	-w /linux \
 	-p 127.0.0.1:${SSH_PORT}:52222 \

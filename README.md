@@ -3,7 +3,7 @@ This repository contains *one* workflow for building and modifying the Linux ker
 It consists of two main components.
 The first is a docker container that contains all the requirements to build the Linux kernel, as well
     as the requirements to run QEMU.
-The second is a QEMU  script that boots a virtual machine running a custom version of the Linux kernel.
+The second is a QEMU script that boots a virtual machine running a custom version of the Linux kernel.
 Using these together allows you to easily make and test changes to the Linux kernel without needing to
     manage all the packages locally.
 
