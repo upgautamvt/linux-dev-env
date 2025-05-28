@@ -1,0 +1,48 @@
+BPF maps [1] are currently used in eBPF to exchange data between kernel space and userspace. It provides different types of data structures, such as Array[2], Ring buffer[3], and Hashmap[4], to meet different types of data sharing needs.
+
+However, these map-based storages have several limitations. At the 2025 Linux Storage, Filesystem, Memory-Management, and BPF Summit (LSFMM), Emil Tsalapatis shared that when developing the BPF-based scheduler("sched_ext"[5]), the C data structures that store statistics, control info, and anything else necessary to make scheduling decisions are difficult to be implemented with BPF maps because they involve complex pointer-chasing between different maps.
+
+To solve the current problems with BPF maps, a new data exchange method on BPF introduced in Linux 6.9 - BPF arenas[5], may be a better choice. It allows the creation of dynamically sized "arenas"[6]. In contrast to BPF maps, these arenas do not allocate pages up front. BPF programs can add pages to the arena using bpf_arena_alloc_pages(), and pages are automatically added when a user-space program triggers a page fault inside the arena. Therefore, it is more beneficial in saving memory resources.
+
+However, BPF arenas have several significant limitations at the time.
+
+Arenas have one big drawback, however: they only store data. While from the CPU's perspective, the pointers in the kernel and the pointers in userspace are the same, from the BPF perspective, the current BPF verifier prevents BPF programs from creating pointers to kernel objects in arenas for security reasons. Even if the program writes a kernel pointer to the arena, the verification program will not allow it to be used after reading it back.
+
+Secondly, for the BPF verifier, data structures stored in arenas and the BPF stack must be treated as different types. In other words, when passing the data structure with the same field to the kernel function, depending on the storage location(arenas or stack), two functions with the same logic but accepting different parameters may be required to handle it. A better approach might be to copy the data in the arenas to the BPF stack before passing it to the kernel function, or using the inline function instead. But neither approach is ideal.
+
+There are still many discussions about the final form of BPF arenas. If the associated issues can be overcome, this could potentially be a complete replacement for BPF maps.
+
+Please find the link for more information.
+
+https://lnkd.in/g-F-bGgG
+
+[1] https://lnkd.in/gc2V7eUj
+[2] https://lnkd.in/gNayn_Rn
+[3] https://lnkd.in/gPPeQ3Em
+[4] https://lnkd.in/gtpHHRFe
+[5] https://lnkd.in/geJ-4VG6
+https://lnkd.in/gRuyP8v5
+[6] https://lnkd.in/gnDr2HSh
+
+
+
+Overcoming eBPF restrictions. To share mapping between
+user space and the kernel, we use BPF Arena [56]. Previous
+work that attempts to extend user logic into the kernel
+suffers from a lack of dynamic memory allocation and
+efficient shared mappings with users, resorting to custom
+implementation [14], [57]. However, eBPF introduces a
+new feature, called bpf_arena, which enables efficient
+user-kernel shared mappings. Upon a page fault, the kernel
+invokes the registered XMP page fault handler with the
+faulted virtual address. The XMP handler can then access
+the garbage collection metadata using direct pointer access.
+While eBPF enforces safety through static verification,
+it limits the number of loops to guarantee program termina-
+tion [58]. We use the existing eBPF feature, BPF Iterator, to
+allow users to iterate over page table entries. BPF iterators
+define callbacks that are executed for every entry in a variety
+of kernel data structures [59], to handle iterations with
+unknown counts or complex branching. We implement new
+iterator types and associated helper functions for the page
+table entries
