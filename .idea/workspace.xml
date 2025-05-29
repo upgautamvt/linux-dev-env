@@ -22,17 +22,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="816ccff9-952c-4fcf-949d-8ba34604cf1a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/bpf/bpfarena.kern.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/bpf_arena" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/loader/instructions" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bpf-progs/memory_exploit_sleepable_kfunc/bpf/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/bpf/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bpf-progs/memory_exploit_sleepable_kfunc/bpf/kfunc.kern.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bpf-progs/memory_exploit_sleepable_kfunc/kfunc_module/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bpf-progs/memory_exploit_sleepable_kfunc/kfunc_module/hello.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bpf-progs/memory_exploit_sleepable_kfunc/loader/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/loader/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bpf-progs/memory_exploit_sleepable_kfunc/loader/load.user.c" beforeDir="false" afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/loader/load.user.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bpf-progs/memory_exploit_sleepable_kfunc/trigger_program/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bpf-progs/memory_exploit_sleepable_kfunc/trigger_program/trigger.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bpf-progs/bpf_arena/bpf/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/bpf/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bpf-progs/bpf_arena/bpf/bpfarena.kern.c" beforeDir="false" afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/bpf/bpfarena.kern.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bpf-progs/bpf_arena/bpf_arena" beforeDir="false" afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/bpf_arena" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bpf-progs/bpf_arena/loader/load.user.c" beforeDir="false" afterPath="$PROJECT_DIR$/bpf-progs/bpf_arena/loader/load.user.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bpf-progs/dummy_kfunc/loader/load.user.c" beforeDir="false" afterPath="$PROJECT_DIR$/bpf-progs/dummy_kfunc/loader/load.user.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/linux" beforeDir="false" afterPath="$PROJECT_DIR$/linux" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -79,6 +75,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/bpf-progs/bpf_arena/bpf/bpfarena.kern.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///opt/linux-dev-env/bpf-progs/dummy_kfunc/loader/load.user.c" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/linux/.config" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectApplicationVersion">
@@ -162,7 +159,7 @@
       <workItem from="1739295544288" duration="306000" />
       <workItem from="1739295881913" duration="9832000" />
       <workItem from="1743526455136" duration="46000" />
-      <workItem from="1748361955417" duration="18423000" />
+      <workItem from="1748361955417" duration="26868000" />
     </task>
     <servers />
   </component>
